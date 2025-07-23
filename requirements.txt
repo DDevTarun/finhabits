@@ -1,0 +1,14 @@
+google-adk[database]==0.3.0
+yfinance==0.2.56
+psutil==5.9.5
+litellm==1.66.3
+google-generativeai==0.8.5
+python-dotenv==1.1.0
+deprecated
+
+# Additional requirements from pyproject.toml
+requests>=2.31.0
+pydantic>=2.11.3
+google-cloud-aiplatform[adk,agent_engines]>=1.42.1
+absl-py>=2.1.0
+cloudpickle>=3.0.0

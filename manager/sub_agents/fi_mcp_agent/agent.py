@@ -1,39 +1,20 @@
 from google.adk.agents import Agent
-
-# Import all the tools
-from .mcp_tools import (
-    fetch_net_worth,
-    fetch_credit_report,
-    fetch_epf_details,
-    fetch_mf_transactions,
-    fetch_bank_transactions,
-    fetch_stock_transactions
-)
-
-# Create a list containing all the tool functions
-all_mcp_tools = [
-    fetch_net_worth,
-    fetch_credit_report,
-    fetch_epf_details,
-    fetch_mf_transactions,
-    fetch_bank_transactions,
-    fetch_stock_transactions
-]
+from .mcp_tools import get_all_my_details,fetch_net_worth, logout_and_start_new_session
 
 fi_mcp_agent = Agent(
     name="fi_mcp_agent",
     model="gemini-1.5-flash",
-    description="Fetches and manages a user's financial data from the Fi MCP server after they have logged in.",
-    
-    # --- Start of Corrected Instructions ---
+    description="Fetches a user's complete financial profile from the MCP server after they log in.",
     instruction="""
-You are a financial assistant agent that retrieves data from the Fi MCP server.
-- The user must first log in. The tools will handle the login process.
-- If a tool call response indicates that login is required, inform the user that they need to follow the login URL printed in the terminal.
-- Once logged in, you can use the tools to answer questions about the user's financial data.
-- You DO NOT need to ask the user for a user_id.
-""",
-    # --- End of Corrected Instructions ---
+You have two primary functions:
+1.  When the user asks to "get my details", call the `get_all_my_details` tool.
+2.  When the user wants to "logout", "log in as someone else", or "start a new session", call the `logout_and_start_new_session` tool.
 
-    tools=all_mcp_tools,
+**Handling Login:**
+If the `get_all_my_details` tool returns a JSON string containing `{"status": "login_required"}`, you must extract the `login_url` and `message` from it. Present this to the user in a clear, helpful way. For example: "To continue, please log in here: [URL]. Once you are done, please make your request again."
+
+**Handling Data:**
+If the tool returns any other JSON, provide the raw, unmodified JSON string as your final answer. Do not summarize or change it.
+""",
+    tools=[get_all_my_details,fetch_net_worth, logout_and_start_new_session],
 )
